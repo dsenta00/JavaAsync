@@ -5,14 +5,15 @@ package javamessagingnetbeans;
  */
 public class Message
 {
+
     /*
      * Message sender.
      */
     private final Employee sender;
 
     /*
-     * Message owner. On message creation, sender is message owner. After
-     * message sending, receiver becomes message owner.
+     * Message owner. On message creation, message sender is message owner.
+     * After message sending, message receiver becomes message owner.
      */
     private Employee owner;
 
@@ -22,33 +23,37 @@ public class Message
     private final String type;
 
     /*
-     * The real message.
+     * The message content.
      */
-    private final Object message;
+    private final Object content;
 
     /**
      * Constructor.
      *
-     * @param <T> - message type.
      * @param sender - sender.
-     * @param message - message to send.
+     * @param content - message content.
      */
-    public <T> Message(Employee sender, T message) {
+    public Message(Employee sender, Object content)
+    {
         this.sender = sender;
         this.owner = sender;
-        this.message = message;
+        this.content = content;
 
         /*
-         * 1) Remove "class " string.
+         * 1) Remove "class " from string.
          *
-         * class SomeMessage => SomeMessage
+         * Example:
          *
-         * 2) Remove library path
+         *   class java.lang.lib.SomeMessage => java.lang.lib.SomeMessage
          *
-         * java.lang.library.SomeMessage => SomeMessage
+         * 2) Remove package path from string.
+         *
+         * Example:
+         *
+         *   java.lang.lib.SomeMessage => SomeMessage
          */
-        this.type = message.getClass().toString().replace("class ", "")
-                .replaceAll("^.*?(\\w+)\\W*$", "$1");
+        this.type = content.getClass().toString().replace("class ", "")
+            .replaceAll("^.*?(\\w+)\\W*$", "$1");
     }
 
     /**
@@ -77,10 +82,9 @@ public class Message
      * @param employee - employee to check.
      * @return true if employee have access, otherwise false.
      */
-    public boolean checkAccess(Employee employee)
+    public boolean access(Employee employee)
     {
-        return employee.getEmployeeName()
-                .equals(this.owner.getEmployeeName());
+        return employee.name().equals(this.owner.name());
     }
 
     /**
@@ -100,8 +104,8 @@ public class Message
      * @return message content.
      */
     @SuppressWarnings("unchecked")
-    public <T> T getMessage()
+    public <T> T content()
     {
-        return (T) this.message;
+        return (T) this.content;
     }
 }

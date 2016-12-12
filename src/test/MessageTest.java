@@ -1,15 +1,18 @@
 package test;
+
 public class MessageTest
 {
+
     private final int number;
 
-    public MessageTest(int number) {
+    public MessageTest(int number)
+    {
         this.number = number;
     }
 
     public void read()
     {
-        System.out.print("Number is " + this.number + "!\n");
+        System.out.println(" ..... Number is " + this.number + "!");
     }
 
     public int getNumber()

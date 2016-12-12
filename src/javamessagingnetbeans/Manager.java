@@ -10,6 +10,12 @@ import java.util.Map;
  */
 public class Manager
 {
+
+    /*
+     * Employees notice period.
+     */
+    private final int EMPLOYEE_NOTICE_PERIOD = 20;
+
     /*
      * Employee map.
      */
@@ -18,8 +24,25 @@ public class Manager
     /**
      * Constructor.
      */
-    public Manager() {
+    public Manager()
+    {
         this.employeeMap = new HashMap<>();
+    }
+
+    /**
+     * Manager is always waiting for some employee.
+     *
+     * @param milliseconds - milliseconds to wait.
+     */
+    private void wait(int milliseconds)
+    {
+        try
+        {
+            Thread.currentThread().sleep(milliseconds);
+        }
+        catch (InterruptedException ex)
+        {
+        }
     }
 
     /**
@@ -34,13 +57,23 @@ public class Manager
     }
 
     /**
+     * Get number of employees.
+     *
+     * @return number of employees.
+     */
+    public int numOfEmployees()
+    {
+        return this.employeeMap.size();
+    }
+
+    /**
      * Remove employee.
      *
      * @param employee - employee to remove
      */
     public void removeEmployee(Employee employee)
     {
-        this.employeeMap.remove(employee.getEmployeeName());
+        this.employeeMap.remove(employee.name());
     }
 
     /**
@@ -58,30 +91,44 @@ public class Manager
             return false;
         }
 
-        employee.quitJob();
+        this.removeEmployee(employee);
+
+        if (this.numOfEmployees() == 0)
+        {
+            this.closeCompany();
+        }
+        else
+        {
+            employee.quitJob();
+        }
 
         return true;
     }
 
     /**
-     * Destroy company.
+     * Close company.
+     */
+    public void closeCompany()
+    {
+        Trace.print("Closed company");
+        Runtime.getRuntime().halt(0);
+    }
+
+    /**
+     * Fire all employees and terminate application.
      */
     public void bancrupt()
     {
         List<String> employeeList = new LinkedList<>(
-                this.employeeMap.keySet());
+            this.employeeMap.keySet());
 
         for (String employeeName : employeeList)
         {
             this.fireEmployee(employeeName);
-
-            /*
-             * Wait for employee to be removed from system.
-             */
-            while (this.employeeMap.containsKey(employeeName))
-            {
-            }
+            this.wait(this.EMPLOYEE_NOTICE_PERIOD);
         }
+
+        this.closeCompany();
     }
 
     /**
@@ -96,24 +143,11 @@ public class Manager
     {
         T employee = null;
 
-        if (this.employeeMap.containsKey(name))
-        {
-            try
-            {
-                throw new Exception(
-                        "Employee with name " + name + "already exist!");
-            }
-            catch (Exception e)
-            {
-            }
-            return null;
-        }
-
         try
         {
             employee = clazz.newInstance();
-            employee.setManager(this);
-            employee.setEmployeeName(name);
+            employee.manager(this);
+            employee.name(name);
 
             this.employeeMap.put(name, employee);
         }

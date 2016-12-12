@@ -1,4 +1,5 @@
 package javamessagingnetbeans;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -7,26 +8,27 @@ import java.util.Date;
  */
 public final class Trace
 {
+
     /*
      * Boolean variable checker if trace is on. By default is set to off
      * (false).
      */
-    private static boolean traceOn = false;
+    private static boolean on = false;
 
     /**
      * Turn on trace.
      */
-    public static void traceOn()
+    public static void on()
     {
-        traceOn = true;
+        on = true;
     }
 
     /**
      * Turn off trace.
      */
-    public static void traceOff()
+    public static void off()
     {
-        traceOn = false;
+        on = false;
     }
 
     /**
@@ -36,11 +38,10 @@ public final class Trace
      */
     public static void print(String string)
     {
-        if (traceOn)
+        if (on)
         {
             System.out.println(new SimpleDateFormat("[HH:mm:ss.SSS] ").format(
-                    new Date()).toString()
-                    + string);
+                new Date()) + string);
         }
     }
 }

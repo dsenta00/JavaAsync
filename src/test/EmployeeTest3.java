@@ -5,6 +5,7 @@ import javamessagingnetbeans.Message;
 
 public class EmployeeTest3 extends Employee
 {
+
     /**
      * Handle MessageTest3 message.
      *
@@ -12,7 +13,7 @@ public class EmployeeTest3 extends Employee
      */
     private void handleMessageTest3(Message message)
     {
-        this.getManager().bancrupt();
+        this.manager().fireEmployee(this.name());
     }
 
     /**
@@ -22,30 +23,38 @@ public class EmployeeTest3 extends Employee
      */
     private void handleMessageTest2(Message message)
     {
-        MessageTest2 info = message.getMessage();
+        MessageTest2 info = message.content();
 
         info.read();
 
+        if (info.getNumber() > 50)
+        {
+            this.send(new KataMessage(), message.sender());
+        }
+
         if (info.getNumber() > 100)
         {
-            this.getManager().fireEmployee(message.sender().getEmployeeName());
+            this.manager().bancrupt();
         }
         else
         {
-            this.sendMessage(new MessageTest2(info.getNumber() + 2),
-                    message.sender());
+            this.send(new MessageTest2(info.getNumber() + 2), message.sender());
         }
     }
 
     @Override
-    public void main()
+    public void init()
     {
-        for (;;)
-        {
-            Message message = this.receiveMessage();
+        Employee employee = this.manager().getEmployee("EmployeeTest");
+        this.setupCollaboration(employee);
+        this.send(new MessageTest(0), employee);
+    }
 
-            switch (message.type())
-            {
+    @Override
+    public void messageEvent(Message message)
+    {
+        switch (message.type())
+        {
             case "MessageTest2":
                 this.handleMessageTest2(message);
                 break;
@@ -55,7 +64,6 @@ public class EmployeeTest3 extends Employee
             default:
                 this.exception("Unkown signal received!");
                 break;
-            }
         }
     }
 }

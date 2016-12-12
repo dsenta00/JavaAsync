@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class Collaboration
 {
+
     /*
      * First employee.
      */
@@ -32,8 +33,8 @@ public class Collaboration
      */
     private void trace(String string)
     {
-        Trace.print("[" + this.first.getEmployeeName() + ", "
-                + this.second.getEmployeeName() + "] => " + string);
+        Trace.print("{" + this.first.name() + ", "
+            + this.second.name() + "} -> " + string);
     }
 
     /**
@@ -42,7 +43,8 @@ public class Collaboration
      * @param employee1 - fist employee.
      * @param employee2 - second employee.
      */
-    public Collaboration(Employee employee1, Employee employee2) {
+    public Collaboration(Employee employee1, Employee employee2)
+    {
         this.messageQueue = new ConcurrentLinkedQueue<>();
         this.first = employee1;
         this.second = employee2;
@@ -56,18 +58,18 @@ public class Collaboration
      * @param sender - message sender.
      * @param message - the message.
      */
-    public void sendMessage(Employee sender, Message message)
+    public void send(Employee sender, Message message)
     {
         message.setOwner(sender == this.first ? this.second : this.first);
 
-        this.trace(sender.getEmployeeName() + " sending " + message.type());
+        this.trace(sender.name() + " sending " + message.type());
 
         /*
-         * If another thread (other employee) tries to access messageQueue in
+         * If another Thread (another Employee) tries to access messageQueue in
          * order to modify it, offer() will return false.
          *
-         * In that case offering message is forced to repeat action until
-         * message is put in queue.
+         * In that case, offer() is forced to repeat until message is put in
+         * queue.
          */
         while (!this.messageQueue.offer(message))
         {
@@ -94,13 +96,13 @@ public class Collaboration
      *
      * @param receiver - message receiver.
      * @return Message if messageQueue isn't empty and if receiver has access to
-     *         message, otherwise return null.
+     * message, otherwise return null.
      */
     public Message receiveMessage(Employee receiver)
     {
         Message message = this.messageQueue.peek();
 
-        return (message != null && message.checkAccess(receiver))
-                        ? this.messageQueue.poll() : null;
+        return (message != null && message.access(receiver))
+            ? this.messageQueue.poll() : null;
     }
 }

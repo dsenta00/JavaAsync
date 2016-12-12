@@ -5,18 +5,38 @@ import javamessagingnetbeans.Message;
 
 public class EmployeeTest2 extends Employee
 {
+
     EmployeeTest3 employeeTest3;
 
-    /**
-     * Init employee.
-     */
-    private void init()
+    @Override
+    public void init()
     {
         this.employeeTest3 = this.createEmployee(EmployeeTest3.class,
-                "EmployeeTest3");
+            "EmployeeTest3");
         this.employeeTest3.start();
         this.setupCollaboration(this.employeeTest3);
-        this.sendMessage(new MessageTest2(1), this.employeeTest3);
+        this.send(new MessageTest2(1), this.employeeTest3);
+    }
+
+    @Override
+    public void messageEvent(Message message)
+    {
+        switch (message.type())
+        {
+            case "MessageTest":
+                this.handleMessageTest(message);
+                break;
+            case "MessageTest2":
+                this.handleMessageTest2(message);
+                break;
+            case "KataMessage":
+                KataMessage kata = message.content();
+                kata.read();
+                break;
+            default:
+                this.exception("Unkown signal received! => " + message.type());
+                break;
+        }
     }
 
     /**
@@ -26,12 +46,11 @@ public class EmployeeTest2 extends Employee
      */
     private void handleMessageTest(Message message)
     {
-        MessageTest info = message.getMessage();
+        MessageTest info = message.content();
 
         info.read();
 
-        this.sendMessage(new MessageTest(info.getNumber() + 2),
-                message.sender());
+        this.send(new MessageTest(info.getNumber() + 2), message.sender());
     }
 
     /**
@@ -41,35 +60,10 @@ public class EmployeeTest2 extends Employee
      */
     private void handleMessageTest2(Message message)
     {
-        MessageTest2 info = message.getMessage();
+        MessageTest2 info = message.content();
 
         info.read();
 
-        this.sendMessage(new MessageTest2(info.getNumber() + 2),
-                message.sender());
-    }
-
-    @Override
-    public void main()
-    {
-        this.init();
-
-        for (;;)
-        {
-            Message message = this.receiveMessage();
-
-            switch (message.type())
-            {
-            case "MessageTest":
-                this.handleMessageTest(message);
-                break;
-            case "MessageTest2":
-                this.handleMessageTest2(message);
-                break;
-            default:
-                this.exception("Unkown signal received! => " + message.type());
-                break;
-            }
-        }
+        this.send(new MessageTest2(info.getNumber() + 2), message.sender());
     }
 }

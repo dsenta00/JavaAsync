@@ -6,14 +6,20 @@ import javamessagingnetbeans.Trace;
 
 public class MainTest
 {
+
+    /**
+     * Main test.
+     *
+     * @param args - program arguments.
+     */
     public static void main(String[] args)
     {
-        Trace.traceOn();
+        Trace.on();
         Manager manager = new Manager();
         Employee employee;
-        
+
         employee = manager.createEmployee(EmployeeTest.class,
-                "EmployeeTest");
+            "EmployeeTest");
         employee.start();
     }
 }

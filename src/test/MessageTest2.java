@@ -2,15 +2,17 @@ package test;
 
 public class MessageTest2
 {
+
     private final String number;
 
-    public MessageTest2(int number) {
+    public MessageTest2(int number)
+    {
         this.number = Integer.toString(number);
     }
 
     public void read()
     {
-        System.out.print("Numba is " + this.number + "!\n");
+        System.out.println(" ..... String number is " + this.number + "!");
     }
 
     public int getNumber()
