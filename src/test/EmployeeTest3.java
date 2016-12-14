@@ -29,7 +29,7 @@ public class EmployeeTest3 extends Employee
 
         if (info.getNumber() > 50)
         {
-            this.send(new KataMessage(), message.sender());
+            this.send(new StupidMessage(), message.sender());
         }
 
         if (info.getNumber() > 100)

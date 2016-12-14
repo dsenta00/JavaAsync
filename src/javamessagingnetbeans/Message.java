@@ -38,22 +38,7 @@ public class Message
         this.sender = sender;
         this.owner = sender;
         this.content = content;
-
-        /*
-         * 1) Remove "class " from string.
-         *
-         * Example:
-         *
-         *   class java.lang.lib.SomeMessage => java.lang.lib.SomeMessage
-         *
-         * 2) Remove package path from string.
-         *
-         * Example:
-         *
-         *   java.lang.lib.SomeMessage => SomeMessage
-         */
-        this.type = content.getClass().toString().replace("class ", "")
-            .replaceAll("^.*?(\\w+)\\W*$", "$1");
+        this.type = content.getClass().getSimpleName();
     }
 
     /**

@@ -27,13 +27,13 @@ public class Collaboration
     private final Queue<Message> messageQueue;
 
     /**
-     * Print collaboration trace.
+     * Print collaboration log.
      *
      * @param string - string to print.
      */
-    private void trace(String string)
+    private void log(String string)
     {
-        Trace.print("{" + this.first.name() + ", "
+        first.manager().getSecretary().log("{" + this.first.name() + ", "
             + this.second.name() + "} -> " + string);
     }
 
@@ -49,7 +49,7 @@ public class Collaboration
         this.first = employee1;
         this.second = employee2;
 
-        this.trace("Collaboration created");
+        this.log("Collaboration created");
     }
 
     /**
@@ -62,7 +62,7 @@ public class Collaboration
     {
         message.setOwner(sender == this.first ? this.second : this.first);
 
-        this.trace(sender.name() + " sending " + message.type());
+        this.log(sender.name() + " sending " + message.type());
 
         /*
          * If another Thread (another Employee) tries to access messageQueue in
@@ -83,7 +83,7 @@ public class Collaboration
     @Deprecated
     public void cleanQueue()
     {
-        this.trace("cleaning queue!");
+        this.log("cleaning queue!");
 
         while (!this.messageQueue.isEmpty())
         {

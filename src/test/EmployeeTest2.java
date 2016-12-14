@@ -29,9 +29,9 @@ public class EmployeeTest2 extends Employee
             case "MessageTest2":
                 this.handleMessageTest2(message);
                 break;
-            case "KataMessage":
-                KataMessage kata = message.content();
-                kata.read();
+            case "StupidMessage":
+                StupidMessage stupidMssg = message.content();
+                stupidMssg.read();
                 break;
             default:
                 this.exception("Unkown signal received! => " + message.type());

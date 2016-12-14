@@ -1,7 +1,6 @@
 package javamessagingnetbeans;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -12,30 +11,36 @@ public abstract class Employee extends Thread
 {
 
     /*
-     * Quick relax -> 1 millisecond.
+     * Quick relax -> 20 nanoseconds.
      */
-    private final int QUICK_RELAX = 1;
+    private final int QUICK_RELAX = 20;
 
     /*
-     * Big relax -> 10 millisecond.
+     * Big relax -> 100 nanoseconds.
      */
-    private final int BIG_RELAX = 10;
+    private final int BIG_RELAX = 100;
 
     /*
-     * Treshold for noOfNotMessageReceived counter. If noOfNotMessageReceived
+     * Threshold for noOfNotMessageReceived counter. If noOfNotMessageReceived
+     * reach this value, Employee will take QUICK_RELAX.
+     */
+    private final int NO_OF_NOT_MESSAGE_RECEIVED_WITHOUT_SLEEP_TRESHOLD = 16;
+
+    /*
+     * Threshold for noOfNotMessageReceived counter. If noOfNotMessageReceived
      * reach this value, Employee will take BIG_RELAX instead of QUICK_RELAX.
      */
-    private final int NO_OF_NOT_MESSAGE_RECEIVED_TRESHOLD = 5;
+    private final int NO_OF_NOT_MESSAGE_RECEIVED_THRESHOLD = 32;
 
     /*
      * Limit for not message received. If noOfNotMessage received
      * reach this limit, this thread will terminate it self.
      *
-     * If Employee is idle for 10 minutes (600 seconds/600,000 ms)
+     * If Employee is idle for 10 minutes (600 seconds/600,000,000,000 ns)
      * Employee is considered to use to many resources and Employee should
-     * terminate itself. Approximatelly every 10 ms counter is increased by one.
+     * terminate itself. Approximatelly every 10 ns counter is increased by one.
      */
-    private final int NO_OF_NOT_MESSAGE_RECEIVED_EXIT = 60000;
+    private final long NO_OF_NOT_MESSAGE_RECEIVED_EXIT = 60000000000L;
 
     /*
      * Employee name.
@@ -55,7 +60,7 @@ public abstract class Employee extends Thread
     /*
      * Number of time not message received.
      */
-    private int noOfNotMessageReceived;
+    private long noOfNotMessageReceived;
 
     /*
      * Flag to check if employee is leaving job.
@@ -87,6 +92,12 @@ public abstract class Employee extends Thread
         if (this.noOfNotMessageReceived > this.NO_OF_NOT_MESSAGE_RECEIVED_EXIT)
         {
             manager().fireEmployee(this.employeeName);
+            return;
+        }
+
+        if (this.noOfNotMessageReceived < this.NO_OF_NOT_MESSAGE_RECEIVED_WITHOUT_SLEEP_TRESHOLD)
+        {
+            return;
         }
 
         /*
@@ -94,7 +105,7 @@ public abstract class Employee extends Thread
          * concurrent.
          */
         this.relax((this.noOfNotMessageReceived
-            < this.NO_OF_NOT_MESSAGE_RECEIVED_TRESHOLD)
+            < this.NO_OF_NOT_MESSAGE_RECEIVED_THRESHOLD)
                 ? this.QUICK_RELAX : this.BIG_RELAX);
     }
 
@@ -103,7 +114,7 @@ public abstract class Employee extends Thread
      */
     private void leaveCompany()
     {
-        this.trace("just left company");
+        this.log("just left company");
         Thread.currentThread().stop();
     }
 
@@ -123,7 +134,7 @@ public abstract class Employee extends Thread
             return;
         }
 
-        this.trace("closing collaboration with " + message.sender().name());
+        this.log("closing collaboration with " + message.sender().name());
 
         collaboration.cleanQueue();
         this.send(new CloseCollaborationConfirm(), message.sender());
@@ -139,7 +150,7 @@ public abstract class Employee extends Thread
     {
         this.collaborationMap.remove(message.sender());
 
-        this.trace("closed collaboration with " + message.sender().name());
+        this.log("closed collaboration with " + message.sender().name());
 
         if (this.collaborationMap.isEmpty())
         {
@@ -166,7 +177,7 @@ public abstract class Employee extends Thread
             return;
         }
 
-        this.trace("offered collaboration from " + employee.name());
+        this.log("offered collaboration from " + employee.name());
 
         this.collaborationMap.put(employee, collaboration);
     }
@@ -210,7 +221,7 @@ public abstract class Employee extends Thread
             return;
         }
 
-        this.trace("setup collaboration with " + employee.name());
+        this.log("setup collaboration with " + employee.name());
 
         Collaboration newCollaboration = new Collaboration(this, employee);
 
@@ -262,11 +273,26 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Send all collaboration request in order to quit job.
+     * Send message to all employees.
+     *
+     * @param <T> - message type.
+     * @param message - message to send.
+     */
+    protected <T> void sendToAll(T message)
+    {
+        for (Collaboration collaboration : this.collaborationMap.values())
+        {
+            collaboration.send(this, new Message(this, message));
+        }
+    }
+
+    /**
+     * Send all collaboration request in order to quit job. If no collaboration
+     * exist, leave company.
      */
     public void quitJob()
     {
-        this.trace("leaving company");
+        this.log("leaving company");
 
         this.leavingJob = true;
 
@@ -276,12 +302,7 @@ public abstract class Employee extends Thread
             return;
         }
 
-        for (Entry<Employee, Collaboration> entry : this.collaborationMap
-            .entrySet())
-        {
-            entry.getValue().cleanQueue();
-            this.send(new CloseCollaborationRequest(), entry.getKey());
-        }
+        this.sendToAll(new CloseCollaborationRequest());
     }
 
     /**
@@ -303,15 +324,13 @@ public abstract class Employee extends Thread
     /**
      * Relax for some time.
      *
-     * @param milliseconds - milliseconds to sleep.
+     * @param nanoseconds - milliseconds to sleep.
      */
-    protected void relax(long milliseconds)
+    protected void relax(int nanoseconds)
     {
-        this.trace("relax for " + milliseconds + " milliseconds");
-
         try
         {
-            Thread.sleep(milliseconds);
+            Thread.sleep(0, nanoseconds);
         }
         catch (InterruptedException e)
         {
@@ -319,13 +338,13 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Printout employee trace.
+     * Printout employee log.
      *
      * @param string - string to print
      */
-    protected void trace(String string)
+    protected void log(String string)
     {
-        Trace.print(this.name() + " -> " + string);
+        this.manager.getSecretary().log(this.name() + " -> " + string);
     }
 
     /**
@@ -352,24 +371,25 @@ public abstract class Employee extends Thread
             if (message == null)
             {
                 this.handleNotReceivedMessage();
-                continue;
             }
-
-            this.noOfNotMessageReceived = 0;
-
-            switch (message.type())
+            else
             {
-                case "CloseCollaborationRequest":
-                    this.handleMessageCloseCollaborationRequest(message);
-                    break;
-                case "CloseCollaborationConfirm":
-                    this.handleMessageCloseCollaborationConfirm(message);
-                    break;
-                default:
-                    if (!this.leavingJob)
-                    {
-                        return message;
-                    }
+                this.noOfNotMessageReceived = 0;
+
+                switch (message.type())
+                {
+                    case "CloseCollaborationRequest":
+                        this.handleMessageCloseCollaborationRequest(message);
+                        break;
+                    case "CloseCollaborationConfirm":
+                        this.handleMessageCloseCollaborationConfirm(message);
+                        break;
+                    default:
+                        if (!this.leavingJob)
+                        {
+                            return message;
+                        }
+                }
             }
         }
     }
@@ -405,7 +425,7 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Initialize.
+     * Initialize employee.
      */
     public abstract void init();
 
@@ -417,7 +437,7 @@ public abstract class Employee extends Thread
     public abstract void messageEvent(Message message);
 
     /**
-     * Executable part for Thread.
+     * Executable part of Thread.
      */
     @Override
     public void run()

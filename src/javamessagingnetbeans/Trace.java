@@ -1,8 +1,5 @@
 package javamessagingnetbeans;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * Class for tracing code.
  */
@@ -40,8 +37,7 @@ public final class Trace
     {
         if (on)
         {
-            System.out.println(new SimpleDateFormat("[HH:mm:ss.SSS] ").format(
-                new Date()) + string);
+            System.out.println(string);
         }
     }
 }

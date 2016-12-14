@@ -1,5 +1,7 @@
 package javamessagingnetbeans;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,28 +23,46 @@ public class Manager
      */
     Map<String, Employee> employeeMap;
 
+    /*
+     * Every handsome manager needs to have a secretary.
+     */
+    Secretary secretary;
+
     /**
      * Constructor.
      */
     public Manager()
     {
+        this.secretary = new Secretary("log_"
+            + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".log");
+
         this.employeeMap = new HashMap<>();
     }
 
     /**
      * Manager is always waiting for some employee.
      *
-     * @param milliseconds - milliseconds to wait.
+     * @param nanoseconds - nanoseconds to wait.
      */
-    private void wait(int milliseconds)
+    private void wait(int nanoseconds)
     {
         try
         {
-            Thread.currentThread().sleep(milliseconds);
+            Thread.currentThread().sleep(0, nanoseconds);
         }
         catch (InterruptedException ex)
         {
         }
+    }
+
+    /**
+     * Get secretary.
+     *
+     * @return The secretary.
+     */
+    public Secretary getSecretary()
+    {
+        return this.secretary;
     }
 
     /**
@@ -110,7 +130,8 @@ public class Manager
      */
     public void closeCompany()
     {
-        Trace.print("Closed company");
+        secretary.log("Closed company!");
+        secretary.giveLayOffPay();
         Runtime.getRuntime().halt(0);
     }
 
