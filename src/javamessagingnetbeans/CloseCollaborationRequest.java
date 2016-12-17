@@ -6,6 +6,11 @@ package javamessagingnetbeans;
 public class CloseCollaborationRequest extends Message
 {
 
+    /**
+     * The Constructor.
+     *
+     * @param sender - Employee sender.
+     */
     public CloseCollaborationRequest(Employee sender)
     {
         super(sender);

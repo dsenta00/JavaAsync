@@ -6,9 +6,14 @@ package javamessagingnetbeans;
 public class CloseCollaborationConfirm extends Message
 {
 
+    /**
+     * The constructor.
+     *
+     * @param sender - Employee sender.
+     */
     public CloseCollaborationConfirm(Employee sender)
     {
-        super(sender, null);
+        super(sender);
     }
 
 }

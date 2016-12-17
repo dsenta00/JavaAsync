@@ -95,11 +95,17 @@ class Secretary
         this.typingMachine.close();
     }
 
+    /**
+     * Turn secretary on :)
+     */
     void on()
     {
         this.on = true;
     }
 
+    /**
+     * Turn secretary off :(
+     */
     void off()
     {
         this.on = false;
