@@ -1,8 +1,12 @@
 package test;
 
-import javamessagingnetbeans.Employee;
-import javamessagingnetbeans.Message;
+import javaasync.Employee;
+import javaasync.Message;
+import javaasync.escalation.UnkownMessageEscalation;
 
+/**
+ * Employee test 3.
+ */
 public class EmployeeTest3 extends Employee
 {
 
@@ -13,7 +17,11 @@ public class EmployeeTest3 extends Employee
      */
     private void handleMessageTest3(Message message)
     {
-        this.manager().fireEmployee(this.name());
+        MessageTest3 info = message.content();
+
+        info.print();
+
+        send(message.content(), this, 1000);
     }
 
     /**
@@ -25,29 +33,27 @@ public class EmployeeTest3 extends Employee
     {
         MessageTest2 info = message.content();
 
-        info.read();
+        info.print();
 
-        if (info.getNumber() > 5000)
-        {
-            this.send(new StupidMessage(), message.sender());
-        }
+        send(new StupidMessage(), message.sender());
 
         if (info.getNumber() > 100000)
         {
-            this.manager().bancrupt();
+            manager().bancrupt();
         }
         else
         {
-            this.send(new MessageTest2(info.getNumber() + 1), message.sender());
+            send(new MessageTest2(info.getNumber() + 1), message.sender());
         }
     }
 
     @Override
     public void init()
     {
-        Employee employee = this.manager().getEmployee("EmployeeTest");
-        this.setupCollaboration(employee);
-        this.send(new MessageTest(0), employee);
+        Employee employee = manager().getEmployee("EmployeeTest");
+        setupCollaboration(employee);
+        send(new MessageTest2(0), employee);
+        send(new MessageTest3(), this, 1000);
     }
 
     @Override
@@ -56,13 +62,13 @@ public class EmployeeTest3 extends Employee
         switch (message.type())
         {
             case "MessageTest2":
-                this.handleMessageTest2(message);
+                handleMessageTest2(message);
                 break;
             case "MessageTest3":
-                this.handleMessageTest3(message);
+                handleMessageTest3(message);
                 break;
             default:
-                this.exception("Unkown signal received!");
+                escalation(new UnkownMessageEscalation(message));
                 break;
         }
     }

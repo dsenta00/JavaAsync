@@ -1,4 +1,4 @@
-package javamessagingnetbeans;
+package javaasync;
 
 /**
  * Employee always needs to go on vacation. Otherwise, other employees wouldn't

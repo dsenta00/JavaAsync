@@ -1,4 +1,4 @@
-package javamessagingnetbeans;
+package javaasync;
 
 /**
  * Class for tracing code.

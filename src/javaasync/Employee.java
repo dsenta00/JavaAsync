@@ -1,7 +1,12 @@
-package javamessagingnetbeans;
+package javaasync;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javaasync.escalation.CollaborationExistEscalation;
+import javaasync.escalation.EscalationReport;
+import javaasync.escalation.UnknownCollaborationEscalation;
 
 /**
  * Employee class represents a independent worker. Each employee is ran through
@@ -24,6 +29,11 @@ public abstract class Employee extends Thread
      * Collaboration map.
      */
     private final Map<Employee, Collaboration> collaborationMap;
+
+    /*
+     * Employees own task schedule.
+     */
+    private Collaboration ownTasks;
 
     /*
      * Main manager.
@@ -67,8 +77,7 @@ public abstract class Employee extends Thread
 
         if (collaboration == null)
         {
-            exception("Collaboration with employee "
-                + message.sender().name() + " doesn't exist.");
+            escalation(new UnknownCollaborationEscalation(message.sender(), this));
             return;
         }
 
@@ -107,9 +116,11 @@ public abstract class Employee extends Thread
      */
     private void offerCollaboration(Employee employee, Collaboration collaboration)
     {
-        if (getCollaboration(employee) != null)
+        Collaboration existingCollaboration = getCollaboration(employee);
+
+        if (existingCollaboration != null)
         {
-            exception("collaboration already exist!");
+            escalation(new CollaborationExistEscalation(existingCollaboration));
             return;
         }
 
@@ -149,20 +160,22 @@ public abstract class Employee extends Thread
      *
      * @param employee - employee to set collaboration with.
      */
-    protected void setupCollaboration(Employee employee)
+    public void setupCollaboration(Employee employee)
     {
-        if (getCollaboration(employee) != null)
+        Collaboration collaboration = getCollaboration(employee);
+
+        if (collaboration != null)
         {
-            exception("collaboration with employee already exist!");
+            escalation(new CollaborationExistEscalation(collaboration));
             return;
         }
 
         log("setup collaboration with " + employee.name());
 
-        Collaboration newCollaboration = new Collaboration(this, employee);
+        collaboration = new Collaboration(this, employee);
 
-        collaborationMap.put(employee, newCollaboration);
-        employee.offerCollaboration(this, newCollaboration);
+        collaborationMap.put(employee, collaboration);
+        employee.offerCollaboration(this, collaboration);
     }
 
     /**
@@ -189,7 +202,7 @@ public abstract class Employee extends Thread
 
     /**
      * Send message if collaboration between employees exist. Otherwise throw
-     * exception.
+     * escalation.
      *
      * @param <T> - message type.
      * @param message - message to send.
@@ -201,11 +214,49 @@ public abstract class Employee extends Thread
 
         if (collaboration == null)
         {
-            exception("Collaboration doesn't exist!");
-            return;
+            if (this != toEmployee)
+            {
+                escalation(new UnknownCollaborationEscalation(this, toEmployee));
+                return;
+            }
+            else
+            {
+                collaboration = ownTasks;
+            }
         }
 
         collaboration.send(this, new Message(this, message));
+    }
+
+    /**
+     * Send with timeout.
+     *
+     * @param <T> - message type.
+     * @param message - message.
+     * @param toEmployee - to employee.
+     * @param tmo - timeout in milliseconds.
+     */
+    protected <T> void send(final T message, final Employee toEmployee, final int tmo)
+    {
+        Thread thread = new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    Thread.sleep(tmo);
+                }
+                catch (InterruptedException ex)
+                {
+                    Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                Employee.this.send(message, toEmployee);
+            }
+        });
+
+        thread.start();
     }
 
     /**
@@ -220,6 +271,16 @@ public abstract class Employee extends Thread
         {
             collaboration.send(this, new Message(this, message));
         }
+    }
+
+    /**
+     * Check if employee is leaving company.
+     *
+     * @return true if leaving, otherwise false.
+     */
+    public boolean leavingJob()
+    {
+        return leavingJob;
     }
 
     /**
@@ -245,19 +306,13 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Throw a exception.
+     * Throw a escalation.
      *
-     * @param message - the detail message.
+     * @param report - escalation report.
      */
-    protected void exception(String message)
+    protected void escalation(EscalationReport report)
     {
-        try
-        {
-            throw new Exception(message);
-        }
-        catch (Exception e)
-        {
-        }
+        manager.raiseEscalation(report);
     }
 
     /**
@@ -305,6 +360,14 @@ public abstract class Employee extends Thread
                 {
                     break;
                 }
+            }
+
+            /*
+             * If not received messages from others, check own tasks.
+             */
+            if (message == null)
+            {
+                message = ownTasks.receiveMessage(this);
             }
 
             if (message == null)
@@ -388,6 +451,8 @@ public abstract class Employee extends Thread
     @Override
     public void run()
     {
+        ownTasks = new Collaboration(this, this);
+
         init();
 
         for (;;)

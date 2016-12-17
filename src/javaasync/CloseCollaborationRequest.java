@@ -1,4 +1,4 @@
-package javamessagingnetbeans;
+package javaasync;
 
 /**
  * Dummy message for notifying another employees for job quit.

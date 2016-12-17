@@ -1,4 +1,4 @@
-package javamessagingnetbeans;
+package javaasync;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -6,17 +6,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javaasync.escalation.EscalationManager;
+import javaasync.escalation.EscalationReport;
 
 /**
  * class Manager creates and manages employees.
  */
 public class Manager
 {
-
-    /*
-     * Employees notice period.
-     */
-    private final int EMPLOYEE_NOTICE_PERIOD = 20;
 
     /*
      * Employee map.
@@ -28,6 +25,11 @@ public class Manager
      */
     private final Secretary secretary;
 
+    /*
+     * Frankesteins sidekick - Igor.
+     */
+    private final EscalationManager escalationManager;
+
     /**
      * Constructor.
      */
@@ -36,7 +38,28 @@ public class Manager
         secretary = new Secretary(new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
             .format(new Date()) + ".log");
 
+        escalationManager = new EscalationManager(this);
+
         employeeMap = new HashMap<>();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Manager.this.secretary.giveLayOffPay();
+            }
+        }));
+    }
+
+    /**
+     * Raise escalation.
+     *
+     * @param report - escalation report.
+     */
+    public void raiseEscalation(EscalationReport report)
+    {
+        this.escalationManager.handle(report);
     }
 
     /**

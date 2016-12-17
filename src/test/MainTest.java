@@ -1,7 +1,10 @@
 package test;
 
-import javamessagingnetbeans.Manager;
+import javaasync.Manager;
 
+/**
+ * Main test.
+ */
 public class MainTest
 {
 

@@ -1,4 +1,4 @@
-package javamessagingnetbeans;
+package javaasync;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 /**
  * Lady that does everything administrative.
  */
-class Secretary
+public class Secretary
 {
 
     /*
@@ -37,11 +37,11 @@ class Secretary
     public Secretary(String fileName)
     {
         this.fileName = fileName;
-        this.on = false;
+        on = false;
 
         try
         {
-            this.typingMachine = new PrintWriter(this.fileName, "UTF-8");
+            typingMachine = new PrintWriter(fileName, "UTF-8");
         }
         catch (FileNotFoundException | UnsupportedEncodingException ex)
         {
@@ -52,17 +52,18 @@ class Secretary
     /**
      * Logging part that executes from Thread.
      *
+     * @param logType - log type
      * @param info - information to store into typing machine.
      */
-    protected void logThread(String info)
+    protected void logThread(String logType, String info)
     {
-        String format = "[DEBUG] "
+        String format = "[" + logType.toUpperCase() + "] "
             + new SimpleDateFormat("[HH:mm:ss.SSS] ").format(new Date())
             + info;
 
-        if (this.on)
+        if (on)
         {
-            this.typingMachine.println(format);
+            typingMachine.println(format);
         }
 
         Trace.print(format);
@@ -80,7 +81,26 @@ class Secretary
             @Override
             public void run()
             {
-                Secretary.this.logThread(info);
+                Secretary.this.logThread("DEBUG", info);
+            }
+        });
+
+        thread.start();
+    }
+
+    /**
+     * Log error information.
+     *
+     * @param info - The information.
+     */
+    public void error(final String info)
+    {
+        Thread thread = new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Secretary.this.logThread("ERROR", info);
             }
         });
 
@@ -92,7 +112,7 @@ class Secretary
      */
     public void giveLayOffPay()
     {
-        this.typingMachine.close();
+        typingMachine.close();
     }
 
     /**
@@ -100,7 +120,7 @@ class Secretary
      */
     void on()
     {
-        this.on = true;
+        on = true;
     }
 
     /**
@@ -108,6 +128,6 @@ class Secretary
      */
     void off()
     {
-        this.on = false;
+        on = false;
     }
 }

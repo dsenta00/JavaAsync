@@ -1,4 +1,4 @@
-package javamessagingnetbeans;
+package javaasync;
 
 /**
  * Way of working. Protocol between Consultant and Employee.

@@ -1,4 +1,4 @@
-package javamessagingnetbeans;
+package javaasync;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -56,6 +56,36 @@ public class Collaboration
         closing = false;
 
         log("Collaboration created");
+    }
+
+    /**
+     * See if collaboration is closing.
+     *
+     * @return true if closing, otherwise false.
+     */
+    public boolean closing()
+    {
+        return closing;
+    }
+
+    /**
+     * Return first collaborator.
+     *
+     * @return first collaborator.
+     */
+    public Employee first()
+    {
+        return first;
+    }
+
+    /**
+     * Return second collaborator.
+     *
+     * @return second collaborator.
+     */
+    public Employee second()
+    {
+        return second;
     }
 
     /**

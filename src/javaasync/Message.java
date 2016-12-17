@@ -1,4 +1,4 @@
-package javamessagingnetbeans;
+package javaasync;
 
 /**
  * Employees are exchanging information through Messages.
@@ -75,6 +75,16 @@ public class Message
     }
 
     /**
+     * Get owner name.
+     *
+     * @return owner name.
+     */
+    public String ownerName()
+    {
+        return owner.name();
+    }
+
+    /**
      * Check if employee have access to this.
      *
      * @param employee - employee to check.
@@ -82,7 +92,7 @@ public class Message
      */
     public boolean access(Employee employee)
     {
-        return employee.name().equals(owner.name());
+        return employee.name().equals(ownerName());
     }
 
     /**

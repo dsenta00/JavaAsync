@@ -1,10 +1,16 @@
 package test;
 
+/**
+ * Stupid message.
+ */
 public class StupidMessage
 {
 
-    public void read()
+    /**
+     * Print.
+     */
+    public void print()
     {
-        System.out.println(" ..... Ode Mile na trajekt! :) ");
+        System.out.println(" ..... Stupid message.");
     }
 }

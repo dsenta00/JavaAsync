@@ -1,8 +1,12 @@
 package test;
 
-import javamessagingnetbeans.Employee;
-import javamessagingnetbeans.Message;
+import javaasync.Employee;
+import javaasync.Message;
+import javaasync.escalation.UnkownMessageEscalation;
 
+/**
+ * Employee test 2.
+ */
 public class EmployeeTest2 extends Employee
 {
 
@@ -31,10 +35,10 @@ public class EmployeeTest2 extends Employee
                 break;
             case "StupidMessage":
                 StupidMessage stupidMssg = message.content();
-                stupidMssg.read();
+                stupidMssg.print();
                 break;
             default:
-                exception("Unkown signal received! => " + message.type());
+                escalation(new UnkownMessageEscalation(message));
                 break;
         }
     }
@@ -48,7 +52,7 @@ public class EmployeeTest2 extends Employee
     {
         MessageTest info = message.content();
 
-        info.read();
+        info.print();
 
         send(new MessageTest(info.getNumber() + 1), message.sender());
     }
@@ -62,7 +66,7 @@ public class EmployeeTest2 extends Employee
     {
         MessageTest2 info = message.content();
 
-        info.read();
+        info.print();
 
         send(new MessageTest2(info.getNumber() + 1), message.sender());
     }
