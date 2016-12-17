@@ -1,1 +1,0 @@
-JavaMessaging.CloseCollaborationConfirm
