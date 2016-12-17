@@ -1,10 +1,9 @@
 package javamessagingnetbeans;
 
 /**
- *
- * @author edujsen
+ * Way of working. Protocol between Consultant and Employee.
  */
-public abstract class Wow
+abstract class Wow
 {
 
     public abstract boolean conversationEnd(String word);

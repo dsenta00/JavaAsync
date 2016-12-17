@@ -26,6 +26,11 @@ public class Collaboration
      */
     private final Queue<Message> messageQueue;
 
+    /*
+     * Flag to indicate if collaboration is closing.
+     */
+    private boolean closing;
+
     /**
      * Print collaboration log.
      *
@@ -33,8 +38,8 @@ public class Collaboration
      */
     private void log(String string)
     {
-        first.manager().getSecretary().log("{" + this.first.name() + ", "
-            + this.second.name() + "} -> " + string);
+        first.manager().getSecretary().log("{" + first.name() + ", "
+            + second.name() + "} -> " + string);
     }
 
     /**
@@ -45,11 +50,12 @@ public class Collaboration
      */
     public Collaboration(Employee employee1, Employee employee2)
     {
-        this.messageQueue = new ConcurrentLinkedQueue<>();
-        this.first = employee1;
-        this.second = employee2;
+        messageQueue = new ConcurrentLinkedQueue<>();
+        first = employee1;
+        second = employee2;
+        closing = false;
 
-        this.log("Collaboration created");
+        log("Collaboration created");
     }
 
     /**
@@ -60,9 +66,17 @@ public class Collaboration
      */
     public void send(Employee sender, Message message)
     {
-        message.setOwner(sender == this.first ? this.second : this.first);
+        message.setOwner(sender == first ? second : first);
 
-        this.log(sender.name() + " sending " + message.type());
+        log(sender.name() + " sending "
+            + ((message instanceof Message)
+                ? message.type()
+                : message.getClass().getSimpleName()));
+
+        if (message instanceof CloseCollaborationRequest)
+        {
+            closing = true;
+        }
 
         /*
          * If another Thread (another Employee) tries to access messageQueue in
@@ -71,23 +85,8 @@ public class Collaboration
          * In that case, offer() is forced to repeat until message is put in
          * queue.
          */
-        while (!this.messageQueue.offer(message))
+        while (!messageQueue.offer(message))
         {
-        }
-    }
-
-    /**
-     * Clean queue completely. Put on deprecated in order to avoid user to using
-     * it.
-     */
-    @Deprecated
-    public void cleanQueue()
-    {
-        this.log("cleaning queue!");
-
-        while (!this.messageQueue.isEmpty())
-        {
-            this.messageQueue.poll();
         }
     }
 
@@ -100,9 +99,11 @@ public class Collaboration
      */
     public Message receiveMessage(Employee receiver)
     {
-        Message message = this.messageQueue.peek();
+        Message message = messageQueue.peek();
 
-        return (message != null && message.access(receiver))
-            ? this.messageQueue.poll() : null;
+        return (message != null
+            && (!closing || message instanceof CloseCollaborationConfirm)
+            && message.access(receiver))
+            ? messageQueue.poll() : null;
     }
 }

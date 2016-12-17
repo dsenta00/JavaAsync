@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 /**
  * Lady that does everything administrative.
  */
-public class Secretary
+class Secretary
 {
 
     /*
@@ -24,6 +24,11 @@ public class Secretary
      */
     protected PrintWriter typingMachine;
 
+    /*
+     * Check if secretary is on.
+     */
+    private boolean on;
+
     /**
      * Setup her workplace.
      *
@@ -32,6 +37,7 @@ public class Secretary
     public Secretary(String fileName)
     {
         this.fileName = fileName;
+        this.on = false;
 
         try
         {
@@ -54,7 +60,10 @@ public class Secretary
             + new SimpleDateFormat("[HH:mm:ss.SSS] ").format(new Date())
             + info;
 
-        this.typingMachine.println(format);
+        if (this.on)
+        {
+            this.typingMachine.println(format);
+        }
 
         Trace.print(format);
     }
@@ -84,5 +93,15 @@ public class Secretary
     public void giveLayOffPay()
     {
         this.typingMachine.close();
+    }
+
+    void on()
+    {
+        this.on = true;
+    }
+
+    void off()
+    {
+        this.on = false;
     }
 }

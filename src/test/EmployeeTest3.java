@@ -27,18 +27,18 @@ public class EmployeeTest3 extends Employee
 
         info.read();
 
-        if (info.getNumber() > 50)
+        if (info.getNumber() > 5000)
         {
             this.send(new StupidMessage(), message.sender());
         }
 
-        if (info.getNumber() > 100)
+        if (info.getNumber() > 100000)
         {
             this.manager().bancrupt();
         }
         else
         {
-            this.send(new MessageTest2(info.getNumber() + 2), message.sender());
+            this.send(new MessageTest2(info.getNumber() + 1), message.sender());
         }
     }
 

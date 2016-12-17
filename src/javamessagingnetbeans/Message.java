@@ -20,7 +20,7 @@ public class Message
     /*
      * Message type.
      */
-    private final String type;
+    protected final String type;
 
     /*
      * The message content.
@@ -36,9 +36,22 @@ public class Message
     public Message(Employee sender, Object content)
     {
         this.sender = sender;
-        this.owner = sender;
         this.content = content;
-        this.type = content.getClass().getSimpleName();
+        owner = sender;
+        type = content.getClass().getSimpleName();
+    }
+
+    /**
+     * Constructor for dummy message.
+     *
+     * @param sender - sender.
+     */
+    public Message(Employee sender)
+    {
+        this.sender = sender;
+        owner = sender;
+        content = null;
+        type = "";
     }
 
     /**
@@ -48,7 +61,7 @@ public class Message
      */
     public void setOwner(Employee employee)
     {
-        this.owner = employee;
+        owner = employee;
     }
 
     /**
@@ -58,7 +71,7 @@ public class Message
      */
     public String type()
     {
-        return this.type;
+        return type;
     }
 
     /**
@@ -69,7 +82,7 @@ public class Message
      */
     public boolean access(Employee employee)
     {
-        return employee.name().equals(this.owner.name());
+        return employee.name().equals(owner.name());
     }
 
     /**
@@ -79,7 +92,7 @@ public class Message
      */
     public Employee sender()
     {
-        return this.sender;
+        return sender;
     }
 
     /**
@@ -91,6 +104,6 @@ public class Message
     @SuppressWarnings("unchecked")
     public <T> T content()
     {
-        return (T) this.content;
+        return (T) content;
     }
 }

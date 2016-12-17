@@ -11,11 +11,11 @@ public class EmployeeTest2 extends Employee
     @Override
     public void init()
     {
-        this.employeeTest3 = this.createEmployee(EmployeeTest3.class,
+        employeeTest3 = createEmployee(EmployeeTest3.class,
             "EmployeeTest3");
-        this.employeeTest3.start();
-        this.setupCollaboration(this.employeeTest3);
-        this.send(new MessageTest2(1), this.employeeTest3);
+        employeeTest3.start();
+        setupCollaboration(employeeTest3);
+        send(new MessageTest2(1), employeeTest3);
     }
 
     @Override
@@ -24,17 +24,17 @@ public class EmployeeTest2 extends Employee
         switch (message.type())
         {
             case "MessageTest":
-                this.handleMessageTest(message);
+                handleMessageTest(message);
                 break;
             case "MessageTest2":
-                this.handleMessageTest2(message);
+                handleMessageTest2(message);
                 break;
             case "StupidMessage":
                 StupidMessage stupidMssg = message.content();
                 stupidMssg.read();
                 break;
             default:
-                this.exception("Unkown signal received! => " + message.type());
+                exception("Unkown signal received! => " + message.type());
                 break;
         }
     }
@@ -50,7 +50,7 @@ public class EmployeeTest2 extends Employee
 
         info.read();
 
-        this.send(new MessageTest(info.getNumber() + 2), message.sender());
+        send(new MessageTest(info.getNumber() + 1), message.sender());
     }
 
     /**
@@ -64,6 +64,6 @@ public class EmployeeTest2 extends Employee
 
         info.read();
 
-        this.send(new MessageTest2(info.getNumber() + 2), message.sender());
+        send(new MessageTest2(info.getNumber() + 1), message.sender());
     }
 }

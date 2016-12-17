@@ -12,11 +12,11 @@ public class MessageTest
 
     public void read()
     {
-        System.out.println(" ..... Number is " + this.number + "!");
+        System.out.println(" ..... Number is " + number + "!");
     }
 
     public int getNumber()
     {
-        return this.number;
+        return number;
     }
 }

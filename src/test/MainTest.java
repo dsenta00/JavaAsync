@@ -1,8 +1,6 @@
 package test;
 
-import javamessagingnetbeans.Employee;
 import javamessagingnetbeans.Manager;
-import javamessagingnetbeans.Trace;
 
 public class MainTest
 {
@@ -14,12 +12,11 @@ public class MainTest
      */
     public static void main(String[] args)
     {
-        Trace.on();
         Manager manager = new Manager();
-        Employee employee;
 
-        employee = manager.createEmployee(EmployeeTest.class,
-            "EmployeeTest");
-        employee.start();
+        manager.traceOn();
+        manager.secretaryOn();
+
+        manager.createEmployee(EmployeeTest.class, "EmployeeTest").start();
     }
 }

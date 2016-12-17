@@ -9,11 +9,11 @@ public class EmployeeTest extends Employee
     @Override
     public void init()
     {
-        EmployeeTest2 employeeTest2 = this.createEmployee(EmployeeTest2.class,
+        EmployeeTest2 employeeTest2 = createEmployee(EmployeeTest2.class,
             "EmployeeTest2");
         employeeTest2.start();
-        this.setupCollaboration(employeeTest2);
-        this.send(new MessageTest(2), employeeTest2);
+        setupCollaboration(employeeTest2);
+        send(new MessageTest(2), employeeTest2);
     }
 
     @Override
@@ -22,17 +22,17 @@ public class EmployeeTest extends Employee
         switch (message.type())
         {
             case "MessageTest":
-                this.handleMessageTest(message);
+                handleMessageTest(message);
                 break;
             case "MessageTest2":
-                this.handleMessageTest2(message);
+                handleMessageTest2(message);
                 break;
             case "StupidMessage":
                 StupidMessage stupidMssg = message.content();
                 stupidMssg.read();
                 break;
             default:
-                this.exception("Unkown signal received!");
+                exception("Unkown signal received!");
                 break;
         }
     }
@@ -48,7 +48,7 @@ public class EmployeeTest extends Employee
 
         info.read();
 
-        this.send(new MessageTest(info.getNumber() + 2), message.sender());
+        send(new MessageTest(info.getNumber() + 1), message.sender());
     }
 
     /**
@@ -64,13 +64,12 @@ public class EmployeeTest extends Employee
 
         if (info.getNumber() < 50)
         {
-            this.send(new MessageTest2(info.getNumber() + 2),
-                message.sender());
+            send(new MessageTest2(info.getNumber() + 1), message.sender());
         }
         else
         {
-            this.log("Kill yourself mighty " + message.sender());
-            this.send(new MessageTest3(), message.sender());
+            log("Kill yourself mighty " + message.sender());
+            send(new MessageTest3(), message.sender());
         }
     }
 }

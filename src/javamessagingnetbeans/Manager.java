@@ -21,22 +21,54 @@ public class Manager
     /*
      * Employee map.
      */
-    Map<String, Employee> employeeMap;
+    private final Map<String, Employee> employeeMap;
 
     /*
      * Every handsome manager needs to have a secretary.
      */
-    Secretary secretary;
+    private final Secretary secretary;
 
     /**
      * Constructor.
      */
     public Manager()
     {
-        this.secretary = new Secretary("log_"
-            + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".log");
+        secretary = new Secretary(new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
+            .format(new Date()) + ".log");
 
-        this.employeeMap = new HashMap<>();
+        employeeMap = new HashMap<>();
+    }
+
+    /**
+     * Put traces on.
+     */
+    public void traceOn()
+    {
+        Trace.on();
+    }
+
+    /**
+     * Put traces off.
+     */
+    public void traceOff()
+    {
+        Trace.off();
+    }
+
+    /**
+     * Turn secretary on.
+     */
+    public void secretaryOn()
+    {
+        secretary.on();
+    }
+
+    /**
+     * Turn secretary off.
+     */
+    public void secretaryOff()
+    {
+        secretary.off();
     }
 
     /**
@@ -62,7 +94,7 @@ public class Manager
      */
     public Secretary getSecretary()
     {
-        return this.secretary;
+        return secretary;
     }
 
     /**
@@ -73,7 +105,7 @@ public class Manager
      */
     public Employee getEmployee(String name)
     {
-        return this.employeeMap.get(name);
+        return employeeMap.get(name);
     }
 
     /**
@@ -83,7 +115,7 @@ public class Manager
      */
     public int numOfEmployees()
     {
-        return this.employeeMap.size();
+        return employeeMap.size();
     }
 
     /**
@@ -93,7 +125,7 @@ public class Manager
      */
     public void removeEmployee(Employee employee)
     {
-        this.employeeMap.remove(employee.name());
+        employeeMap.remove(employee.name());
     }
 
     /**
@@ -104,18 +136,18 @@ public class Manager
      */
     public boolean fireEmployee(String name)
     {
-        Employee employee = this.getEmployee(name);
+        Employee employee = getEmployee(name);
 
         if (employee == null)
         {
             return false;
         }
 
-        this.removeEmployee(employee);
+        removeEmployee(employee);
 
-        if (this.numOfEmployees() == 0)
+        if (numOfEmployees() == 0)
         {
-            this.closeCompany();
+            closeCompany();
         }
         else
         {
@@ -141,15 +173,14 @@ public class Manager
     public void bancrupt()
     {
         List<String> employeeList = new LinkedList<>(
-            this.employeeMap.keySet());
+            employeeMap.keySet());
 
         for (String employeeName : employeeList)
         {
-            this.fireEmployee(employeeName);
-            this.wait(this.EMPLOYEE_NOTICE_PERIOD);
+            fireEmployee(employeeName);
         }
 
-        this.closeCompany();
+        closeCompany();
     }
 
     /**
@@ -170,7 +201,7 @@ public class Manager
             employee.manager(this);
             employee.name(name);
 
-            this.employeeMap.put(name, employee);
+            employeeMap.put(name, employee);
         }
         catch (InstantiationException | IllegalAccessException e)
         {
