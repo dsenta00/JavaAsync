@@ -3,46 +3,88 @@ package javaasync.message;
 import javaasync.Employee;
 
 /**
- * Employees are exchanging information through Messages.
+ * Message base.
  */
-public class Message extends MessageBase
+public abstract class Message
 {
 
     /*
-     * The message content.
+     * Message sender.
      */
-    private final Object content;
+    protected final Employee sender;
 
     /*
-     * Check if message is used.
+     * Message owner. On message creation, message sender is message owner.
+     * After message sending, message receiver becomes message owner.
      */
-    private boolean used;
+    private Employee owner;
+
+    /*
+     * Message type.
+     */
+    protected String type;
 
     /**
-     * Constructor.
+     * The constructor.
      *
-     * @param sender - sender.
-     * @param content - message content.
+     * @param owner - Message owner.
      */
-    public Message(Employee sender, Object content)
+    public Message(Employee owner)
     {
-        super(sender);
-        this.content = content;
-        used = false;
-        type = content.getClass().getSimpleName();
+        sender = owner;
+        this.owner = owner;
+        type = null;
     }
 
     /**
-     * Get message content.
+     * Set receiver as owner.
      *
-     * @param <T> - message type.
-     * @return message content.
+     * @param employee - receiver to set as owner.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T content()
+    public void setOwner(Employee employee)
     {
-        used = true;
-        return (T) content;
+        owner = employee;
+    }
+
+    /**
+     * Get message type.
+     *
+     * @return string that represents message type.
+     */
+    public String type()
+    {
+        return type;
+    }
+
+    /**
+     * Get owner name.
+     *
+     * @return owner name.
+     */
+    public Employee owner()
+    {
+        return owner;
+    }
+
+    /**
+     * Check if employee have access to this.
+     *
+     * @param employee - employee to check.
+     * @return true if employee have access, otherwise false.
+     */
+    public boolean access(Employee employee)
+    {
+        return employee.name().equals(owner.name());
+    }
+
+    /**
+     * Get sender.
+     *
+     * @return sender.
+     */
+    public Employee sender()
+    {
+        return sender;
     }
 
     /**
@@ -50,9 +92,5 @@ public class Message extends MessageBase
      *
      * @return true if used, otherwise false.
      */
-    @Override
-    public boolean used()
-    {
-        return used;
-    }
+    public abstract boolean used();
 }

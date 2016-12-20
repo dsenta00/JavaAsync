@@ -5,7 +5,7 @@ import javaasync.Employee;
 /**
  * Company message.
  */
-public class CompanyMessage extends MessageBase
+public class CompanyMessage extends Message
 {
 
     /**

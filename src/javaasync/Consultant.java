@@ -1,6 +1,6 @@
 package javaasync;
 
-import javaasync.message.Message;
+import javaasync.message.CollaborationMessage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -65,7 +65,7 @@ public class Consultant
      *
      * @return message.
      */
-    public Message listen()
+    public CollaborationMessage listen()
     {
         String output = "";
 
@@ -103,7 +103,7 @@ public class Consultant
      *
      * @param message - message.
      */
-    public void tell(Message message)
+    public void tell(CollaborationMessage message)
     {
         String input = wow.code(message);
 

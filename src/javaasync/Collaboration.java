@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javaasync.message.CloseCollaborationConfirm;
 import javaasync.message.CloseCollaborationRequest;
 import javaasync.message.CompanyMessage;
-import javaasync.message.MessageBase;
+import javaasync.message.Message;
 
 /**
  * Collaboration class represents collaboration between two employees. This
@@ -28,7 +28,7 @@ public class Collaboration
     /*
      * Message queue.
      */
-    private final Queue<MessageBase> messageQueue;
+    private final Queue<Message> messageQueue;
 
     /*
      * Flag to indicate if collaboration is closing.
@@ -98,7 +98,7 @@ public class Collaboration
      * @param sender - message sender.
      * @param message - the message.
      */
-    public void send(Employee sender, MessageBase message)
+    public void send(Employee sender, Message message)
     {
         message.setOwner(sender == first ? second : first);
 
@@ -131,9 +131,9 @@ public class Collaboration
      * @return Message if messageQueue isn't empty and if receiver has access to
      * message, otherwise return null.
      */
-    public MessageBase receiveMessage(Employee receiver)
+    public Message receiveMessage(Employee receiver)
     {
-        MessageBase message = messageQueue.peek();
+        Message message = messageQueue.peek();
 
         return (message != null
             && (!closing || message instanceof CloseCollaborationConfirm)

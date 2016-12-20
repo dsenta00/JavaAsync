@@ -10,8 +10,8 @@ import javaasync.escalation.UnknownCollaborationEscalation;
 import javaasync.escalation.UnkownMessageEscalation;
 import javaasync.message.CloseCollaborationConfirm;
 import javaasync.message.CloseCollaborationRequest;
+import javaasync.message.CollaborationMessage;
 import javaasync.message.Message;
-import javaasync.message.MessageBase;
 
 /**
  * Employee class represents a independent worker. Each me is ran through its
@@ -53,7 +53,7 @@ public abstract class Employee extends Thread
     /*
      * Competence map.
      */
-    private final Map<String, EmployeeCompetence> competenceMap;
+    private final Map<String, Competence> competenceMap;
 
     /**
      * Constructor.
@@ -78,7 +78,7 @@ public abstract class Employee extends Thread
         /*
          * Close collaboration request.
          */
-        competence(new EmployeeCompetence(CloseCollaborationRequest.class)
+        competence(new Competence(CloseCollaborationRequest.class)
         {
             @Override
             public void run()
@@ -90,7 +90,7 @@ public abstract class Employee extends Thread
         /*
          * Close collaboration confirm.
          */
-        competence(new EmployeeCompetence(CloseCollaborationConfirm.class)
+        competence(new Competence(CloseCollaborationConfirm.class)
         {
             @Override
             public void run()
@@ -105,7 +105,7 @@ public abstract class Employee extends Thread
      *
      * @param competence - competence knowledge.
      */
-    protected final void competence(EmployeeCompetence competence)
+    protected final void competence(Competence competence)
     {
         competenceMap.put(competence.messageType(), competence);
     }
@@ -124,7 +124,7 @@ public abstract class Employee extends Thread
      *
      * @param message - CloseCollaborationRequest message
      */
-    private void handleMessageCloseCollaborationRequest(MessageBase message)
+    private void handleMessageCloseCollaborationRequest(Message message)
     {
         Collaboration collaboration = getCollaboration(message.sender());
 
@@ -145,7 +145,7 @@ public abstract class Employee extends Thread
      *
      * @param message - CloseCollaborationConfirm message
      */
-    private void handleMessageCloseCollaborationConfirm(MessageBase message)
+    private void handleMessageCloseCollaborationConfirm(Message message)
     {
         collaborationMap.remove(message.sender());
 
@@ -201,11 +201,9 @@ public abstract class Employee extends Thread
      *
      * @return new me.
      */
-    protected <T extends Employee> T createEmployee(Class<T> clazz, String name)
+    protected <T extends Employee> T newEmployee(Class<T> clazz, String name)
     {
-        return getEmployee(name) == null
-            ? manager.createEmployee(clazz, name)
-            : null;
+        return manager.createEmployee(clazz, name);
     }
 
     /**
@@ -277,7 +275,7 @@ public abstract class Employee extends Thread
             }
         }
 
-        collaboration.send(this, new Message(this, message));
+        collaboration.send(this, new CollaborationMessage(this, message));
     }
 
     /**
@@ -321,7 +319,7 @@ public abstract class Employee extends Thread
     {
         for (Collaboration collaboration : collaborationMap.values())
         {
-            collaboration.send(this, new Message(this, message));
+            collaboration.send(this, new CollaborationMessage(this, message));
         }
     }
 
@@ -396,13 +394,13 @@ public abstract class Employee extends Thread
     /**
      * Receive message.
      *
-     * @return the Message.
+     * @return the CollaborationMessage.
      */
-    protected MessageBase receive()
+    protected Message receive()
     {
         for (;;)
         {
-            MessageBase message = null;
+            Message message = null;
 
             for (Collaboration collaboration : collaborationMap.values())
             {
@@ -502,8 +500,8 @@ public abstract class Employee extends Thread
 
         for (;;)
         {
-            MessageBase message = receive();
-            EmployeeCompetence competence = competenceMap.get(message.type());
+            Message message = receive();
+            Competence competence = competenceMap.get(message.type());
 
             if (competence == null)
             {

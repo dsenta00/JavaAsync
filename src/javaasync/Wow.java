@@ -1,6 +1,6 @@
 package javaasync;
 
-import javaasync.message.Message;
+import javaasync.message.CollaborationMessage;
 
 /**
  * Way of working. Protocol between Consultant and Employee.
@@ -20,9 +20,9 @@ public abstract class Wow
      * Decode value into message.
      *
      * @param value - value input.
-     * @return Message
+     * @return CollaborationMessage
      */
-    public abstract Message decode(String value);
+    public abstract CollaborationMessage decode(String value);
 
     /**
      * Code message into string stream.
@@ -31,5 +31,5 @@ public abstract class Wow
      * @return string stream output if success, otherwise return an empty
      * string.
      */
-    public abstract String code(Message message);
+    public abstract String code(CollaborationMessage message);
 }

@@ -3,7 +3,7 @@ package test;
 /**
  * Message test 3.
  */
-public class MessageTest3
+public class TmoMessage
 {
 
     /**

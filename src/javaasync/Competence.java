@@ -1,12 +1,12 @@
 package javaasync;
 
+import javaasync.message.CollaborationMessage;
 import javaasync.message.Message;
-import javaasync.message.MessageBase;
 
 /**
- * Employee competence.
+ * Employees competence.
  */
-public abstract class EmployeeCompetence implements Runnable
+public abstract class Competence implements Runnable
 {
 
     /*
@@ -17,7 +17,7 @@ public abstract class EmployeeCompetence implements Runnable
     /*
      * The message.
      */
-    private MessageBase message;
+    private Message message;
 
     /**
      * Constructor.
@@ -25,7 +25,7 @@ public abstract class EmployeeCompetence implements Runnable
      * @param <T> - message type.
      * @param message message.
      */
-    public <T> EmployeeCompetence(Class<T> message)
+    public <T> Competence(Class<T> message)
     {
         messageType = message.getSimpleName();
     }
@@ -35,9 +35,9 @@ public abstract class EmployeeCompetence implements Runnable
      *
      * @return message.
      */
-    protected Message message()
+    protected CollaborationMessage message()
     {
-        return (Message) message;
+        return (CollaborationMessage) message;
     }
 
     /**
@@ -51,9 +51,9 @@ public abstract class EmployeeCompetence implements Runnable
     }
 
     /**
-     * Get Message type.
+     * Get CollaborationMessage type.
      *
-     * @return Message type.
+     * @return CollaborationMessage type.
      */
     public String messageType()
     {
@@ -71,7 +71,7 @@ public abstract class EmployeeCompetence implements Runnable
      *
      * @param message - the message.
      */
-    public void execute(MessageBase message)
+    public void execute(Message message)
     {
         this.message = message;
         new Thread(this).start();

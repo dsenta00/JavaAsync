@@ -3,7 +3,7 @@ package test;
 /**
  * Stupid message.
  */
-public class StupidMessage
+public class DummyMessage
 {
 
     /**

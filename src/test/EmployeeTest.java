@@ -1,7 +1,7 @@
 package test;
 
 import javaasync.Employee;
-import javaasync.EmployeeCompetence;
+import javaasync.Competence;
 
 /**
  * Employee test.
@@ -12,11 +12,10 @@ public class EmployeeTest extends Employee
     @Override
     public void init()
     {
-        EmployeeTest2 employeeTest2 = createEmployee(EmployeeTest2.class,
-            "EmployeeTest2");
+        EmployeeTest2 employeeTest2 = newEmployee(EmployeeTest2.class, "EmployeeTest2");
         employeeTest2.start();
         setupCollaboration(employeeTest2);
-        send(new MessageTest(2), employeeTest2);
+        send(new IntegerMessage(2), employeeTest2);
     }
 
     @Override
@@ -25,40 +24,40 @@ public class EmployeeTest extends Employee
         /**
          * Add MessageTest competence.
          */
-        competence(new EmployeeCompetence(MessageTest.class)
+        competence(new Competence(IntegerMessage.class)
         {
             @Override
             public void run()
             {
-                MessageTest info = message().content();
+                IntegerMessage info = message().content();
                 info.print();
-                me().send(new MessageTest(info.getNumber() + 1), message().sender());
+                me().send(new IntegerMessage(info.getNumber() + 1), message().sender());
             }
         });
 
         /**
          * Add MessageTest2 competence.
          */
-        competence(new EmployeeCompetence(MessageTest2.class)
+        competence(new Competence(StringMessage.class)
         {
             @Override
             public void run()
             {
-                MessageTest2 info = message().content();
+                StringMessage info = message().content();
                 info.print();
-                me().send(new MessageTest2(info.getNumber() + 1), message().sender());
+                me().send(new StringMessage(info.getNumber() + 1), message().sender());
             }
         });
 
         /**
          * Add StupidMessage competence.
          */
-        competence(new EmployeeCompetence(StupidMessage.class)
+        competence(new Competence(DummyMessage.class)
         {
             @Override
             public void run()
             {
-                StupidMessage info = message().content();
+                DummyMessage info = message().content();
                 info.print();
             }
         });

@@ -3,7 +3,7 @@ package test;
 /**
  * Message test.
  */
-public class MessageTest
+public class IntegerMessage
 {
 
     private final int number;
@@ -13,7 +13,7 @@ public class MessageTest
      *
      * @param number - the number.
      */
-    public MessageTest(int number)
+    public IntegerMessage(int number)
     {
         this.number = number;
     }

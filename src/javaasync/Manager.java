@@ -218,6 +218,11 @@ public class Manager
      */
     public <T extends Employee> T createEmployee(Class<T> clazz, String name)
     {
+        if (getEmployee(name) != null)
+        {
+            return null;
+        }
+
         T employee = null;
 
         try
