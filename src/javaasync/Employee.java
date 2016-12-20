@@ -8,6 +8,10 @@ import javaasync.escalation.CollaborationExistEscalation;
 import javaasync.escalation.EscalationReport;
 import javaasync.escalation.UnknownCollaborationEscalation;
 import javaasync.escalation.UnkownMessageEscalation;
+import javaasync.message.CloseCollaborationConfirm;
+import javaasync.message.CloseCollaborationRequest;
+import javaasync.message.Message;
+import javaasync.message.MessageBase;
 
 /**
  * Employee class represents a independent worker. Each me is ran through its
@@ -120,7 +124,7 @@ public abstract class Employee extends Thread
      *
      * @param message - CloseCollaborationRequest message
      */
-    private void handleMessageCloseCollaborationRequest(Message message)
+    private void handleMessageCloseCollaborationRequest(MessageBase message)
     {
         Collaboration collaboration = getCollaboration(message.sender());
 
@@ -141,7 +145,7 @@ public abstract class Employee extends Thread
      *
      * @param message - CloseCollaborationConfirm message
      */
-    private void handleMessageCloseCollaborationConfirm(Message message)
+    private void handleMessageCloseCollaborationConfirm(MessageBase message)
     {
         collaborationMap.remove(message.sender());
 
@@ -394,11 +398,11 @@ public abstract class Employee extends Thread
      *
      * @return the Message.
      */
-    protected Message receive()
+    protected MessageBase receive()
     {
         for (;;)
         {
-            Message message = null;
+            MessageBase message = null;
 
             for (Collaboration collaboration : collaborationMap.values())
             {
@@ -498,7 +502,7 @@ public abstract class Employee extends Thread
 
         for (;;)
         {
-            Message message = receive();
+            MessageBase message = receive();
             EmployeeCompetence competence = competenceMap.get(message.type());
 
             if (competence == null)

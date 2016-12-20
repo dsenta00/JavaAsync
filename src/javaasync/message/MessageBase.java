@@ -1,15 +1,17 @@
-package javaasync;
+package javaasync.message;
+
+import javaasync.Employee;
 
 /**
- * Employees are exchanging information through Messages.
+ * Message base.
  */
-public class Message
+public abstract class MessageBase
 {
 
     /*
      * Message sender.
      */
-    private final Employee sender;
+    protected final Employee sender;
 
     /*
      * Message owner. On message creation, message sender is message owner.
@@ -20,45 +22,18 @@ public class Message
     /*
      * Message type.
      */
-    protected final String type;
-
-    /*
-     * The message content.
-     */
-    private final Object content;
-
-    /*
-     * Check if message is used.
-     */
-    private boolean used;
+    protected String type;
 
     /**
-     * Constructor.
+     * The constructor.
      *
-     * @param sender - sender.
-     * @param content - message content.
+     * @param owner - Message owner.
      */
-    public Message(Employee sender, Object content)
+    public MessageBase(Employee owner)
     {
-        this.sender = sender;
-        this.content = content;
-        used = false;
-        owner = sender;
-        type = content.getClass().getSimpleName();
-    }
-
-    /**
-     * Constructor for dummy message.
-     *
-     * @param sender - sender.
-     */
-    public Message(Employee sender)
-    {
-        this.sender = sender;
-        owner = sender;
-        content = null;
-        type = this.getClass().getSimpleName();
-        used = true;
+        sender = owner;
+        this.owner = owner;
+        type = null;
     }
 
     /**
@@ -113,25 +88,9 @@ public class Message
     }
 
     /**
-     * Get message content.
-     *
-     * @param <T> - message type.
-     * @return message content.
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T content()
-    {
-        used = true;
-        return (T) content;
-    }
-
-    /**
      * Check if message is used.
      *
      * @return true if used, otherwise false.
      */
-    public boolean used()
-    {
-        return used;
-    }
+    public abstract boolean used();
 }

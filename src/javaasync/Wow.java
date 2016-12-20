@@ -1,5 +1,7 @@
 package javaasync;
 
+import javaasync.message.Message;
+
 /**
  * Way of working. Protocol between Consultant and Employee.
  */

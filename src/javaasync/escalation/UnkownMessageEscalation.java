@@ -5,7 +5,7 @@
  */
 package javaasync.escalation;
 
-import javaasync.Message;
+import javaasync.message.MessageBase;
 
 /**
  * Unknown message report.
@@ -16,14 +16,14 @@ public class UnkownMessageEscalation extends EscalationReport
     /*
      * The message.
      */
-    private final Message message;
+    private final MessageBase message;
 
     /**
      * The constructor.
      *
      * @param message - the message.
      */
-    public UnkownMessageEscalation(Message message)
+    public UnkownMessageEscalation(MessageBase message)
     {
         this.message = message;
     }
@@ -31,10 +31,9 @@ public class UnkownMessageEscalation extends EscalationReport
     /**
      * Get message.
      *
-     * @param message - message.
      * @return message.
      */
-    public Message getMessage(Message message)
+    public MessageBase getMessage()
     {
         return message;
     }
@@ -48,6 +47,11 @@ public class UnkownMessageEscalation extends EscalationReport
         /* No action to recover */
     }
 
+    /**
+     * Give me proper reason.
+     *
+     * @return string reason.
+     */
     @Override
     public String reason()
     {

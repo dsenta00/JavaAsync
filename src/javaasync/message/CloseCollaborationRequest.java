@@ -1,9 +1,11 @@
-package javaasync;
+package javaasync.message;
+
+import javaasync.Employee;
 
 /**
  * Dummy message for notifying another employees for job quit.
  */
-public class CloseCollaborationRequest extends Message
+public class CloseCollaborationRequest extends CompanyMessage
 {
 
     /**

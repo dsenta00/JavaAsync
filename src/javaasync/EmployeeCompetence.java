@@ -1,5 +1,8 @@
 package javaasync;
 
+import javaasync.message.Message;
+import javaasync.message.MessageBase;
+
 /**
  * Employee competence.
  */
@@ -14,7 +17,7 @@ public abstract class EmployeeCompetence implements Runnable
     /*
      * The message.
      */
-    private Message message;
+    private MessageBase message;
 
     /**
      * Constructor.
@@ -34,7 +37,7 @@ public abstract class EmployeeCompetence implements Runnable
      */
     protected Message message()
     {
-        return message;
+        return (Message) message;
     }
 
     /**
@@ -68,7 +71,7 @@ public abstract class EmployeeCompetence implements Runnable
      *
      * @param message - the message.
      */
-    public void execute(Message message)
+    public void execute(MessageBase message)
     {
         this.message = message;
         new Thread(this).start();

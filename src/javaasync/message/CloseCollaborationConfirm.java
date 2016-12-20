@@ -1,9 +1,11 @@
-package javaasync;
+package javaasync.message;
+
+import javaasync.Employee;
 
 /**
  * Message for confirm to Employee that Collaboration will close.
  */
-public class CloseCollaborationConfirm extends Message
+public class CloseCollaborationConfirm extends CompanyMessage
 {
 
     /**
@@ -15,5 +17,4 @@ public class CloseCollaborationConfirm extends Message
     {
         super(sender);
     }
-
 }

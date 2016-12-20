@@ -1,5 +1,6 @@
 package javaasync;
 
+import javaasync.message.Message;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
