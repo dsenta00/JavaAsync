@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * The consultant. Usually he/she is working in outsourcing. (PHP client for
  * example)
  */
-class Consultant
+public class Consultant
 {
 
     /*

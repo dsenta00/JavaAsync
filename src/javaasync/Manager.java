@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import javaasync.escalation.EscalationManager;
 import javaasync.escalation.EscalationReport;
+import javaasync.escalation.UnexpectedCompanyClosing;
 
 /**
  * class Manager creates and manages employees.
@@ -47,6 +48,7 @@ public class Manager
             @Override
             public void run()
             {
+                Manager.this.raiseEscalation(new UnexpectedCompanyClosing(Manager.this));
                 Manager.this.secretary.giveLayOffPay();
             }
         }));

@@ -3,7 +3,7 @@ package javaasync;
 /**
  * Way of working. Protocol between Consultant and Employee.
  */
-abstract class Wow
+public abstract class Wow
 {
 
     /**

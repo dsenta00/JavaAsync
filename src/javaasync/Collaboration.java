@@ -99,9 +99,9 @@ public class Collaboration
         message.setOwner(sender == first ? second : first);
 
         log(sender.name() + " sending "
-            + ((message instanceof Message)
-                ? message.type()
-                : message.getClass().getSimpleName()));
+            + (((message instanceof CloseCollaborationConfirm) || (message instanceof CloseCollaborationRequest))
+                ? message.getClass().getSimpleName()
+                : message.type()));
 
         if (message instanceof CloseCollaborationRequest)
         {

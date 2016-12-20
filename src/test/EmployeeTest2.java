@@ -1,8 +1,7 @@
 package test;
 
 import javaasync.Employee;
-import javaasync.Message;
-import javaasync.escalation.UnkownMessageEscalation;
+import javaasync.EmployeeCompetence;
 
 /**
  * Employee test 2.
@@ -23,51 +22,38 @@ public class EmployeeTest2 extends Employee
     }
 
     @Override
-    public void messageEvent(Message message)
+    public void registryCompetences()
     {
-        switch (message.type())
+        competence(new EmployeeCompetence(MessageTest.class)
         {
-            case "MessageTest":
-                handleMessageTest(message);
-                break;
-            case "MessageTest2":
-                handleMessageTest2(message);
-                break;
-            case "StupidMessage":
-                StupidMessage stupidMssg = message.content();
-                stupidMssg.print();
-                break;
-            default:
-                escalation(new UnkownMessageEscalation(message));
-                break;
-        }
-    }
+            @Override
+            public void run()
+            {
+                MessageTest info = message().content();
+                info.print();
+                me().send(new MessageTest(info.getNumber() + 1), message().sender());
+            }
+        });
 
-    /**
-     * Handle MessageTest message.
-     *
-     * @param message - The message.
-     */
-    private void handleMessageTest(Message message)
-    {
-        MessageTest info = message.content();
+        competence(new EmployeeCompetence(MessageTest2.class)
+        {
+            @Override
+            public void run()
+            {
+                MessageTest2 info = message().content();
+                info.print();
+                me().send(new MessageTest2(info.getNumber() + 1), message().sender());
+            }
+        });
 
-        info.print();
-
-        send(new MessageTest(info.getNumber() + 1), message.sender());
-    }
-
-    /**
-     * Handle MessageTest2 message.
-     *
-     * @param message - The message.
-     */
-    private void handleMessageTest2(Message message)
-    {
-        MessageTest2 info = message.content();
-
-        info.print();
-
-        send(new MessageTest2(info.getNumber() + 1), message.sender());
+        competence(new EmployeeCompetence(StupidMessage.class)
+        {
+            @Override
+            public void run()
+            {
+                StupidMessage info = message().content();
+                info.print();
+            }
+        });
     }
 }

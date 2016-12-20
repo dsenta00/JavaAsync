@@ -1,51 +1,13 @@
 package test;
 
 import javaasync.Employee;
-import javaasync.Message;
-import javaasync.escalation.UnkownMessageEscalation;
+import javaasync.EmployeeCompetence;
 
 /**
  * Employee test 3.
  */
 public class EmployeeTest3 extends Employee
 {
-
-    /**
-     * Handle MessageTest3 message.
-     *
-     * @param message - The message.
-     */
-    private void handleMessageTest3(Message message)
-    {
-        MessageTest3 info = message.content();
-
-        info.print();
-
-        send(message.content(), this, 1000);
-    }
-
-    /**
-     * Handle MessageTest2 message.
-     *
-     * @param message - the message.
-     */
-    private void handleMessageTest2(Message message)
-    {
-        MessageTest2 info = message.content();
-
-        info.print();
-
-        send(new StupidMessage(), message.sender());
-
-        if (info.getNumber() > 100000)
-        {
-            manager().bancrupt();
-        }
-        else
-        {
-            send(new MessageTest2(info.getNumber() + 1), message.sender());
-        }
-    }
 
     @Override
     public void init()
@@ -57,19 +19,38 @@ public class EmployeeTest3 extends Employee
     }
 
     @Override
-    public void messageEvent(Message message)
+    public void registryCompetences()
     {
-        switch (message.type())
+        competence(new EmployeeCompetence(MessageTest2.class)
         {
-            case "MessageTest2":
-                handleMessageTest2(message);
-                break;
-            case "MessageTest3":
-                handleMessageTest3(message);
-                break;
-            default:
-                escalation(new UnkownMessageEscalation(message));
-                break;
-        }
+            @Override
+            public void run()
+            {
+                MessageTest2 info = message().content();
+                info.print();
+
+                me().send(new StupidMessage(), message().sender());
+
+                if (info.getNumber() > 100000)
+                {
+                    me().manager().bancrupt();
+                }
+                else
+                {
+                    me().send(new MessageTest2(info.getNumber() + 1), message().sender());
+                }
+            }
+        });
+
+        competence(new EmployeeCompetence(MessageTest3.class)
+        {
+            @Override
+            public void run()
+            {
+                MessageTest3 info = message().content();
+                info.print();
+                send(message().content(), me(), 1000);
+            }
+        });
     }
 }

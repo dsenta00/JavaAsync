@@ -27,6 +27,11 @@ public class Message
      */
     private final Object content;
 
+    /*
+     * Check if message is used.
+     */
+    private boolean used;
+
     /**
      * Constructor.
      *
@@ -37,6 +42,7 @@ public class Message
     {
         this.sender = sender;
         this.content = content;
+        used = false;
         owner = sender;
         type = content.getClass().getSimpleName();
     }
@@ -51,7 +57,8 @@ public class Message
         this.sender = sender;
         owner = sender;
         content = null;
-        type = "";
+        type = this.getClass().getSimpleName();
+        used = true;
     }
 
     /**
@@ -79,9 +86,9 @@ public class Message
      *
      * @return owner name.
      */
-    public String ownerName()
+    public Employee owner()
     {
-        return owner.name();
+        return owner;
     }
 
     /**
@@ -92,7 +99,7 @@ public class Message
      */
     public boolean access(Employee employee)
     {
-        return employee.name().equals(ownerName());
+        return employee.name().equals(owner.name());
     }
 
     /**
@@ -114,6 +121,17 @@ public class Message
     @SuppressWarnings("unchecked")
     public <T> T content()
     {
+        used = true;
         return (T) content;
+    }
+
+    /**
+     * Check if message is used.
+     *
+     * @return true if used, otherwise false.
+     */
+    public boolean used()
+    {
+        return used;
     }
 }

@@ -7,16 +7,17 @@ import java.util.logging.Logger;
 import javaasync.escalation.CollaborationExistEscalation;
 import javaasync.escalation.EscalationReport;
 import javaasync.escalation.UnknownCollaborationEscalation;
+import javaasync.escalation.UnkownMessageEscalation;
 
 /**
- * Employee class represents a independent worker. Each employee is ran through
- * its own thread. Employees can collaborate in order to exchange messages.
+ * Employee class represents a independent worker. Each me is ran through its
+ * own thread. Employees can collaborate in order to exchange messages.
  */
 public abstract class Employee extends Thread
 {
 
     /*
-     * Every employee has rights for a vacation.
+     * Every me has rights for a vacation.
      */
     EmployeesVacation vacation;
 
@@ -41,9 +42,14 @@ public abstract class Employee extends Thread
     private Manager manager;
 
     /*
-     * Flag to check if employee is leaving job.
+     * Flag to check if me is leaving job.
      */
     private boolean leavingJob;
+
+    /*
+     * Competence map.
+     */
+    private final Map<String, EmployeeCompetence> competenceMap;
 
     /**
      * Constructor.
@@ -54,7 +60,50 @@ public abstract class Employee extends Thread
         employeeName = null;
         collaborationMap = new ConcurrentHashMap<>();
         vacation = new EmployeesVacation();
+        competenceMap = new ConcurrentHashMap<>();
         leavingJob = false;
+
+        basicCompetences();
+    }
+
+    /**
+     * Add basic competences.
+     */
+    private void basicCompetences()
+    {
+        /*
+         * Close collaboration request.
+         */
+        competence(new EmployeeCompetence(CloseCollaborationRequest.class)
+        {
+            @Override
+            public void run()
+            {
+                me().handleMessageCloseCollaborationRequest(message());
+            }
+        });
+
+        /*
+         * Close collaboration confirm.
+         */
+        competence(new EmployeeCompetence(CloseCollaborationConfirm.class)
+        {
+            @Override
+            public void run()
+            {
+                me().handleMessageCloseCollaborationConfirm(message());
+            }
+        });
+    }
+
+    /**
+     * Employee without competences isn't useful. :)
+     *
+     * @param competence - competence knowledge.
+     */
+    protected final void competence(EmployeeCompetence competence)
+    {
+        competenceMap.put(competence.messageType(), competence);
     }
 
     /**
@@ -109,10 +158,10 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Setup collaboration with employee.
+     * Setup collaboration with me.
      *
-     * @param employee - employee to set collaboration with.
-     * @param collaboration - collaboration contract to set employee.
+     * @param employee - me to set collaboration with.
+     * @param collaboration - collaboration contract to set me.
      */
     private void offerCollaboration(Employee employee, Collaboration collaboration)
     {
@@ -134,19 +183,19 @@ public abstract class Employee extends Thread
      *
      * @return The Manager.
      */
-    protected Manager manager()
+    public Manager manager()
     {
         return manager;
     }
 
     /**
-     * Create new employee.
+     * Create new me.
      *
      * @param <T> - type extends Employee class.
-     * @param clazz - employee type.
-     * @param name - employee name.
+     * @param clazz - me type.
+     * @param name - me name.
      *
-     * @return new employee.
+     * @return new me.
      */
     protected <T extends Employee> T createEmployee(Class<T> clazz, String name)
     {
@@ -156,9 +205,9 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Setup collaboration with employee.
+     * Setup collaboration with me.
      *
-     * @param employee - employee to set collaboration with.
+     * @param employee - me to set collaboration with.
      */
     public void setupCollaboration(Employee employee)
     {
@@ -179,9 +228,9 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Get collaboration between another employee.
+     * Get collaboration between another me.
      *
-     * @param employee - another employee.
+     * @param employee - another me.
      * @return Collaboration if exist, otherwise null.
      */
     protected Collaboration getCollaboration(Employee employee)
@@ -190,7 +239,7 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Get employee by his name.
+     * Get me by his name.
      *
      * @param name - employees name.
      * @return Employee if exist, otherwise null.
@@ -204,11 +253,10 @@ public abstract class Employee extends Thread
      * Send message if collaboration between employees exist. Otherwise throw
      * escalation.
      *
-     * @param <T> - message type.
      * @param message - message to send.
-     * @param toEmployee - employee to send message.
+     * @param toEmployee - me to send message.
      */
-    protected <T> void send(T message, Employee toEmployee)
+    public void send(Object message, Employee toEmployee)
     {
         Collaboration collaboration = getCollaboration(toEmployee);
 
@@ -233,7 +281,7 @@ public abstract class Employee extends Thread
      *
      * @param <T> - message type.
      * @param message - message.
-     * @param toEmployee - to employee.
+     * @param toEmployee - to me.
      * @param tmo - timeout in milliseconds.
      */
     protected <T> void send(final T message, final Employee toEmployee, final int tmo)
@@ -274,7 +322,7 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Check if employee is leaving company.
+     * Check if me is leaving company.
      *
      * @return true if leaving, otherwise false.
      */
@@ -332,7 +380,7 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Printout employee log.
+     * Printout me log.
      *
      * @param string - string to print
      */
@@ -372,6 +420,9 @@ public abstract class Employee extends Thread
 
             if (message == null)
             {
+                /*
+                 * Nothing to do, take a vacation.
+                 */
                 int relaxTime = vacation.count();
 
                 if (relaxTime > 0)
@@ -387,15 +438,7 @@ public abstract class Employee extends Thread
             {
                 vacation.reset();
 
-                if (message instanceof CloseCollaborationRequest)
-                {
-                    handleMessageCloseCollaborationRequest(message);
-                }
-                else if (message instanceof CloseCollaborationConfirm)
-                {
-                    handleMessageCloseCollaborationConfirm(message);
-                }
-                else if (!leavingJob)
+                if (!leavingJob)
                 {
                     return message;
                 }
@@ -404,7 +447,7 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Set employee name.
+     * Set me name.
      *
      * @param name - name.
      */
@@ -414,9 +457,9 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Get employee name.
+     * Get me name.
      *
-     * @return - employee name.
+     * @return - me name.
      */
     public String name()
     {
@@ -434,16 +477,14 @@ public abstract class Employee extends Thread
     }
 
     /**
-     * Initialize employee.
+     * Initialize me.
      */
     public abstract void init();
 
     /**
-     * Message event handler.
-     *
-     * @param message - received message.
+     * Registry necessary competences.
      */
-    public abstract void messageEvent(Message message);
+    public abstract void registryCompetences();
 
     /**
      * Executable part of Thread.
@@ -452,12 +493,22 @@ public abstract class Employee extends Thread
     public void run()
     {
         ownTasks = new Collaboration(this, this);
-
+        registryCompetences();
         init();
 
         for (;;)
         {
-            messageEvent(receive());
+            Message message = receive();
+            EmployeeCompetence competence = competenceMap.get(message.type());
+
+            if (competence == null)
+            {
+                escalation(new UnkownMessageEscalation(message));
+            }
+            else
+            {
+                competence.execute(message);
+            }
         }
     }
 }

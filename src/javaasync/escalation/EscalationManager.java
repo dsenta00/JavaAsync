@@ -17,11 +17,6 @@ public class EscalationManager
     private final List<EscalationReport> escalationHistory;
 
     /*
-     * Line manager.
-     */
-    private final Manager manager;
-
-    /*
      * Shared secretary 3:)
      */
     private final Secretary secretary;
@@ -34,7 +29,6 @@ public class EscalationManager
     public EscalationManager(Manager manager)
     {
         escalationHistory = new ArrayList<>();
-        this.manager = manager;
         this.secretary = manager.getSecretary();
     }
 

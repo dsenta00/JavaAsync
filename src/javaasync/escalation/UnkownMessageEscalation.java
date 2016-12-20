@@ -52,7 +52,7 @@ public class UnkownMessageEscalation extends EscalationReport
     public String reason()
     {
         return "Message \"" + message.type()
-            + "\" not supported to handle from " + message.ownerName()
+            + "\" not supported to handle from " + message.owner().name()
             + ((recovered)
                 ? " -> RECOVERED"
                 : " -> NOT RECOVERED");
